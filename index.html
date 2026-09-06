@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>shotbyjaheim_ — sideline photography</title>
-<meta name="description" content="Friday night football photography in Broward County. Book your shots.">
+<title>shotbyjaheim_ — photography</title>
+<meta name="description" content="Photography in Broward County. Sports, portraits, events. Book your shoot.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -86,13 +86,18 @@
   @media (min-width:1000px){ .grid{columns:3;} }
   .grid figure{
     break-inside:avoid; margin:0 0 12px; border-radius:14px; overflow:hidden;
-    background:var(--card); opacity:0; transform:translateY(14px);
-    transition:opacity .6s ease, transform .6s ease;
+    background:var(--card); opacity:0; transform:translateY(8px);
+    transition:opacity .35s ease, transform .35s ease;
   }
   .grid figure.in{opacity:1; transform:none;}
   .grid img{width:100%; display:block; cursor:zoom-in; transition:transform .5s ease;}
   .grid figure:hover img{transform:scale(1.04);}
 
+  .chips{display:flex; flex-wrap:wrap; gap:8px;}
+  .chips span{
+    border:1px solid var(--line); border-radius:999px; padding:9px 16px;
+    font-size:14px; color:#C9C5BF;
+  }
   .cards{display:grid; gap:12px; grid-template-columns:1fr;}
   @media (min-width:720px){ .cards{grid-template-columns:repeat(3,1fr);} }
   .card{
@@ -144,9 +149,9 @@
 </nav>
 
 <div class="hero" id="top">
-  <p class="eyebrow">Broward County &middot; Football</p>
+  <p class="eyebrow">Broward County &middot; Photography</p>
   <h1>Friday nights,<br><em>frozen.</em></h1>
-  <p class="lede">Sideline photography for high school football. You play, I shoot, you get the frames that matter within 48 hours.</p>
+  <p class="lede">Game days and everything after. Sports, portraits, events, whatever you have going on. Your frames back within 48 hours.</p>
   <div class="actions">
     <a class="btn fill" href="https://instagram.com/shotbyjaheim_">Book your shots</a>
     <a class="btn line" href="#work">See the work</a>
@@ -154,6 +159,19 @@
 </div>
 
 <div class="ticker"><div id="tick"></div></div>
+
+<section id="shoot" style="padding-bottom:0;">
+  <div class="head">
+    <h2>What I shoot</h2>
+    <p>If it is worth remembering, I will shoot it</p>
+  </div>
+  <div class="chips">
+    <span>Football</span><span>Basketball</span><span>Track</span>
+    <span>Senior portraits</span><span>Graduations</span><span>Team photos</span>
+    <span>Birthdays</span><span>Events</span><span>Content days</span>
+    <span>Family</span>
+  </div>
+</section>
 
 <section id="work">
   <div class="head">
@@ -166,13 +184,13 @@
 <section id="pricing">
   <div class="head">
     <h2>Pricing</h2>
-    <p>Per athlete, per game</p>
+    <p>Per person, per shoot</p>
   </div>
   <div class="cards">
     <div class="card">
       <h3>3 edited photos</h3>
       <p class="amt">$5</p>
-      <p>A few clean frames for the story post.</p>
+      <p>A few clean frames for the post.</p>
     </div>
     <div class="card pick">
       <span class="tag">Most picked</span>
@@ -183,14 +201,14 @@
     <div class="card">
       <h3>10 edited photos</h3>
       <p class="amt">$15</p>
-      <p>Full coverage of the night. Best value per frame.</p>
+      <p>Full coverage. Best value per frame.</p>
     </div>
   </div>
 </section>
 
 <div class="cta">
   <h2>Get your shots</h2>
-  <p>DM me the player's name, number, and team.</p>
+  <p>DM me what you need and when.</p>
   <a class="btn fill" href="https://instagram.com/shotbyjaheim_">@shotbyjaheim_</a>
 </div>
 
@@ -227,7 +245,7 @@ const PHOTOS = [
 
 const src = n => encodeURI(FOLDER + n);
 
-const words = ["Sideline access","Friday nights","48 hour turnaround","Broward County","Action and portraits"];
+const words = ["Sports","Portraits","Events","Graduations","48 hour turnaround","Broward County"];
 let strip = "";
 for (let r = 0; r < 2; r++) {
   words.forEach(w => { strip += '<span>' + w + ' <i>&bull;</i></span>'; });
@@ -235,24 +253,26 @@ for (let r = 0; r < 2; r++) {
 document.getElementById('tick').innerHTML = strip;
 
 const grid = document.getElementById('grid');
-const io = new IntersectionObserver(es => {
-  es.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-  });
-}, { rootMargin: '0px 0px -40px 0px' });
 
 PHOTOS.forEach((name, i) => {
   const fig = document.createElement('figure');
   const img = document.createElement('img');
   img.src = src(name);
-  img.alt = 'Football photo by shotbyjaheim_';
-  img.loading = 'lazy';
+  img.alt = 'Photo by shotbyjaheim_';
+  img.loading = 'eager';
+  img.decoding = 'async';
   img.addEventListener('click', () => show(i));
+  img.addEventListener('load', () => fig.classList.add('in'));
   img.addEventListener('error', () => fig.remove());
+  if (img.complete) fig.classList.add('in');
   fig.appendChild(img);
   grid.appendChild(fig);
-  io.observe(fig);
 });
+
+// safety net: never leave a frame hidden
+setTimeout(() => {
+  grid.querySelectorAll('figure').forEach(f => f.classList.add('in'));
+}, 2500);
 
 const lb = document.getElementById('lb');
 const lbimg = document.getElementById('lbimg');
